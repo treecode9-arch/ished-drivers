@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with: { ruby-version: '3.3' }
-      - uses: rubygems/configure-rubygems-credentials@v2
+      - uses: rubygems/configure-rubygems-credentials@v2.1.0
       - run: gem build ished.gemspec && gem push ished-*.gem
         working-directory: ruby
   nuget:
@@ -56,7 +56,8 @@ jobs:
       - run: dotnet pack dotnet/Ished/Ished.csproj -c Release -o out
       - uses: NuGet/login@v1
         id: login
-        with: { user: ${{ vars.NUGET_USER }} }
+        with:
+          user: ${{ vars.NUGET_USER }}
       - run: dotnet nuget push "out/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
   maven:
     # Once its token and signing key are in the secrets: the repository variable MAVEN_PUBLISH set to true.
