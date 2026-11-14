@@ -12,5 +12,9 @@
     <PackageProjectUrl>https://isheddb.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/treecode9-arch/ished-drivers</RepositoryUrl>
     <PackageTags>isheddb;mongodb;database;gridfs</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>

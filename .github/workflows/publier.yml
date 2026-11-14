@@ -1,6 +1,6 @@
 # Publishes every library of a version (its tag, v0.1.0…), each registry behind the « publication » environment
-# (the owner approves each run). No key kept here for PyPI, RubyGems and NuGet: their Trusted Publishing (OIDC).
-# npm: a token for the very first publication (secret NPM_TOKEN), then its Trusted Publishing. Maven Central: its
+# (the owner approves each run). No key kept here for npm, PyPI, RubyGems and NuGet: their Trusted Publishing (OIDC;
+# npm and RubyGems once their first version was published by hand, as they ask). Maven Central: its
 # token and a signing key (secrets MAVEN_CENTRAL_USER, MAVEN_CENTRAL_PASSWORD, MAVEN_GPG_KEY, MAVEN_GPG_PASSPHRASE).
 # Go: nothing to publish (its tag go/v0.1.0 makes the version). PHP: Packagist reads its own repository.
 name: Publier
@@ -17,11 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
-        with: { node-version: 22, registry-url: 'https://registry.npmjs.org' }
-      - run: npm publish --provenance --access public
+        with: { node-version: 24, registry-url: 'https://registry.npmjs.org' }
+      # npm 11.5.1 or later publishes by Trusted Publishing, with its provenance, without a token.
+      - run: npm install -g npm@11 && npm publish --access public
         working-directory: node
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   pypi:
     runs-on: ubuntu-latest
     environment: publication
