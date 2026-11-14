@@ -59,6 +59,8 @@ jobs:
         with: { user: ${{ vars.NUGET_USER }} }
       - run: dotnet nuget push "out/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
   maven:
+    # Once its token and signing key are in the secrets: the repository variable MAVEN_PUBLISH set to true.
+    if: vars.MAVEN_PUBLISH == 'true'
     runs-on: ubuntu-latest
     environment: publication
     steps:
