@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Ished</RootNamespace>
+    <PackageId>Ished</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Bridge</Authors>
+    <Description>IshedDB, written as MongoDB’s official driver of each language (.NET, as MongoDB.Driver)</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://isheddb.com</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/treecode9-arch/ished-drivers</RepositoryUrl>
+    <PackageTags>isheddb;mongodb;database;gridfs</PackageTags>
+  </PropertyGroup>
+</Project>

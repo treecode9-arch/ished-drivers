@@ -1,0 +1,31 @@
+{
+  "name": "@ished/client",
+  "version": "0.1.0",
+  "description": "IshedDB, written as MongoDB’s official driver of each language (Node.js)",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": "./src/index.js",
+  "files": [
+    "src",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "homepage": "https://isheddb.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/treecode9-arch/ished-drivers.git",
+    "directory": "node"
+  },
+  "keywords": [
+    "isheddb",
+    "mongodb",
+    "database",
+    "gridfs"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ished"
+version = "0.1.0"
+description = "IshedDB, written as MongoDB’s official driver of each language (Python, as PyMongo)"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+keywords = ["isheddb", "mongodb", "database", "gridfs"]
+
+[project.urls]
+Homepage = "https://isheddb.com"
+Source = "https://github.com/treecode9-arch/ished-drivers"
+
+[tool.setuptools.packages.find]
+where = ["src"]

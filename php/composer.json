@@ -1,0 +1,17 @@
+{
+  "name": "isheddb/ished",
+  "description": "IshedDB, written as MongoDB’s official driver of each language (PHP, as mongodb/mongodb)",
+  "type": "library",
+  "license": "Apache-2.0",
+  "homepage": "https://isheddb.com",
+  "require": {
+    "php": ">=8.1",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "files": [
+      "src/Ished.php"
+    ]
+  }
+}

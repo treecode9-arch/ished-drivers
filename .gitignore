@@ -1,0 +1,13 @@
+node_modules/
+__pycache__/
+*.pyc
+dist/
+build/
+*.egg-info/
+*.gem
+vendor/
+bin/
+obj/
+out/
+target/
+.DS_Store
