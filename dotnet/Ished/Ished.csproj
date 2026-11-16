@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Ished</RootNamespace>
     <PackageId>Ished</PackageId>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>Bridge</Authors>
     <Description>IshedDB, written as MongoDB’s official driver of each language (.NET, as MongoDB.Driver)</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

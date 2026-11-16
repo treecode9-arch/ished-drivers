@@ -111,11 +111,39 @@ export const MAX_DOCUMENTS = 100_000;
 /** As MongoDB's GridFSBucket: a base's files (gridfs.js). */
 export const GridFSBucket = GridFSBucketOf;
 
+// The pace of a key, or of a file's address (100 requests a second, 200 at once), is refused before anything is done.
+const PACED = 'too many requests: slow down';
+const repeatable = (body) => body === undefined || body === null || typeof body === 'string' || body instanceof ArrayBuffer || ArrayBuffer.isView(body);
+
+/**
+ * [send]'s answer; a request refused by the pace goes again after a short wait, growing (25 ms to 1 s, at random
+ * around it), [waitMs] at most in all, so that a burst slows down instead of failing. Nothing was done the first time:
+ * a write is not made twice. Any other answer as it came (its body read once, given back whole).
+ */
+async function paced(send, waitMs) {
+  for (let waited = 0, pause = 25; ; pause = Math.min(pause * 2, 1000)) {
+    const res = await send();
+    if (res.status !== 429) return res;
+    const text = await res.text();
+    let message = null;
+    try {
+      message = JSON.parse(text)?.error?.message ?? null;
+    } catch {
+      // Not IshedDB's answer: given back as it is.
+    }
+    if (message !== PACED || waited >= waitMs) return new Response(text, { status: res.status, statusText: res.statusText, headers: res.headers });
+    const ms = Math.round(pause * (0.5 + Math.random()));
+    await new Promise((resolve) => setTimeout(resolve, ms));
+    waited += ms;
+  }
+}
+
 /**
  * Connects to IshedDB with a project key. [cluster]: the cluster to work in, as in Atlas (by default the project's
- * first cluster, its "Cluster0").
+ * first cluster, its "Cluster0"). [paceWaitMs]: how long, in all, a request refused by the pace of its key (100 a
+ * second, 200 at once) is sent again before its error comes (10 s; 0: at once).
  */
-export function connect({ url, key, cluster = null, timeoutMs = 30_000, fetch: doFetch = globalThis.fetch }) {
+export function connect({ url, key, cluster = null, timeoutMs = 30_000, paceWaitMs = 10_000, fetch: doFetch = globalThis.fetch }) {
   const endpoint = new URL(url);
   const local = ['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname);
   if (endpoint.protocol !== 'https:' && !(endpoint.protocol === 'http:' && local)) {
@@ -132,12 +160,14 @@ export function connect({ url, key, cluster = null, timeoutMs = 30_000, fetch: d
 
   // [signal]: a request its caller may stop (a change stream closed while it waits).
   async function call(method, path, body, headers = {}, signal = null) {
-    const res = await doFetch(`${root}${path}`, {
-      method,
-      headers: { Authorization: `Bearer ${key}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...headers },
-      body: body === undefined ? undefined : JSON.stringify(body),
-      signal: signal ? AbortSignal.any([AbortSignal.timeout(timeoutMs), signal]) : AbortSignal.timeout(timeoutMs),
-    });
+    const send = () =>
+      doFetch(`${root}${path}`, {
+        method,
+        headers: { Authorization: `Bearer ${key}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...headers },
+        body: body === undefined ? undefined : JSON.stringify(body),
+        signal: signal ? AbortSignal.any([AbortSignal.timeout(timeoutMs), signal]) : AbortSignal.timeout(timeoutMs),
+      });
+    const res = await paced(send, paceWaitMs);
     const text = await res.text();
     const json = text ? JSON.parse(text) : null;
     if (!res.ok) {
@@ -148,8 +178,12 @@ export function connect({ url, key, cluster = null, timeoutMs = 30_000, fetch: d
   }
 
   // What a GridFSBucket (gridfs.js) needs of its base: the calls, and plain requests for the bytes.
-  // A piece sent waits 10 minutes at most; a download as long as its bytes come (signal: null).
-  const raw = (path, { signal, ...init } = {}) => doFetch(`${root}${path}`, { ...init, ...(signal === null ? {} : { signal: AbortSignal.timeout(Math.max(timeoutMs, 600_000)) }) });
+  // A piece sent waits 10 minutes at most; a download as long as its bytes come (signal: null). Sent again after the
+  // pace's refusal when its body can be (bytes, not a stream).
+  const raw = (path, { signal, ...init } = {}) => {
+    const send = () => doFetch(`${root}${path}`, { ...init, ...(signal === null ? {} : { signal: AbortSignal.timeout(Math.max(timeoutMs, 600_000)) }) });
+    return repeatable(init.body) ? paced(send, paceWaitMs) : send();
+  };
   const base = (name) => ({
     [FILES]: { call, raw, path: `${v1}/bases/${enc(name)}`, auth: { Authorization: `Bearer ${key}` }, IshedError, fromWire, toWire },
     collection: (collection) => new Collection(call, `${v1}/bases/${enc(name)}/collections/${enc(collection)}`),
