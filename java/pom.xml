@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.isheddb</groupId>
   <artifactId>ished</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <name>IshedDB for Java</name>
   <description>IshedDB, written as MongoDB’s official driver of each language (Java)</description>
   <url>https://isheddb.com</url>

@@ -1,6 +1,6 @@
 <?php
 // IshedDB for PHP, written as the mongodb/mongodb library is:
-//   $client->selectDatabase('clinique')->selectCollection('patients')->find(['ville' => 'Dakar'], ['sort' => ['age' => -1]])
+//   $client->selectDatabase('boutique')->selectCollection('clients')->find(['ville' => 'Dakar'], ['sort' => ['age' => -1]])
 // Only PHP's curl and json extensions. The key never travels but over HTTPS (or to this machine). Values:
 // DateTimeInterface <-> dates, Ished\Binary <-> bytes, integers beyond 2**53 <-> big integers (as strings in Ished\Int64).
 declare(strict_types=1);

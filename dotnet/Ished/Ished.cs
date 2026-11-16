@@ -1,6 +1,6 @@
 // IshedDB for .NET, written as MongoDB's C# driver is:
-//   var patients = new IshedClient(url, key).GetDatabase("clinique").GetCollection("patients");
-//   var dakar = patients.Find(new Document { ["ville"] = "Dakar" }).Sort(new Document { ["age"] = -1 }).ToList();
+//   var clients = new IshedClient(url, key).GetDatabase("boutique").GetCollection("clients");
+//   var dakar = clients.Find(new Document { ["ville"] = "Dakar" }).Sort(new Document { ["age"] = -1 }).ToList();
 // Only .NET's own libraries. The key never travels but over HTTPS (or to this machine). Values: DateTime <-> dates,
 // long beyond 2**53 <-> big integers, byte[] <-> bytes.
 using System.Net.Http.Headers;

@@ -17,9 +17,9 @@ change à peine.
 
 ```python
 from ished import connect
-patients = connect("https://isheddb.com", key).db("clinique")["patients"]
-for p in patients.find({"ville": "Dakar"}).sort("âge", -1):
-    print(p["nom"])
+clients = connect("https://isheddb.com", key).db("boutique")["clients"]
+for c in clients.find({"ville": "Dakar"}).sort("âge", -1):
+    print(c["nom"])
 ```
 
 La clé d'un projet (`ished_sk_…`) se crée dans la console d'IshedDB ; elle ne voyage qu'en HTTPS et ne doit jamais

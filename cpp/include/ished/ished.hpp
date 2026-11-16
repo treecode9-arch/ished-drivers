@@ -1,7 +1,7 @@
 // IshedDB for C++, written as MongoDB's C++ driver (mongocxx) is:
 //   ished::client client{url, key};
-//   auto patients = client["clinique"]["patients"];
-//   for (auto& doc : patients.find({{"ville", "Dakar"}}, ished::options::find{}.sort({{"age", -1}}))) { … }
+//   auto clients = client["boutique"]["clients"];
+//   for (auto& doc : clients.find({{"ville", "Dakar"}}, ished::options::find{}.sort({{"age", -1}}))) { … }
 // Header-only, on libcurl and nlohmann/json (documents are nlohmann::json). The key never travels but over HTTPS (or
 // to this machine). Dates: ished::date(time_point) and ished::to_time(value); integers beyond 2**53 and binary values
 // are kept as IshedDB keeps them.

@@ -2,7 +2,7 @@
 //
 //   import { connect, remove, increment, serverTime } from '@ished/client';
 //   const db = connect({ url: 'https://api.ished.dev', key: process.env.ISHED_KEY }).base('DB');
-//   const patients = await db.collection('patients').where('service', '==', 'Cardiaque').orderBy('nom').get();
+//   const clients = await db.collection('clients').where('ville', '==', 'Dakar').orderBy('nom').get();
 //
 // Values: JavaScript dates, BigInt and Buffer travel as IshedDB's tagged values and come back as such.
 // The key is a server secret: the library refuses to send it over plain HTTP, except to this machine.
@@ -94,6 +94,17 @@ const document = (wire) =>
   };
 
 const enc = encodeURIComponent;
+// A collection's options, as MongoDB's listCollections gives them: a view's, a capped collection's, or none.
+const optionsOf = (c) => {
+  if (c.type === 'view') return { viewOn: c.viewOn, pipeline: c.pipeline };
+  if (c.capped) return { capped: true, size: c.capped.size, ...(c.capped.max ? { max: c.capped.max } : {}) };
+  if (c.timeseries) {
+    const t = c.timeseries;
+    const timeseries = { timeField: t.timeField, ...(t.metaField ? { metaField: t.metaField } : {}), ...(t.granularity ? { granularity: t.granularity } : {}), bucketMaxSpanSeconds: t.bucketMaxSpanSeconds, ...(t.bucketRoundingSeconds ? { bucketRoundingSeconds: t.bucketRoundingSeconds } : {}) };
+    return { timeseries, ...(t.expireAfterSeconds !== null ? { expireAfterSeconds: t.expireAfterSeconds } : {}) };
+  }
+  return {};
+};
 // What a GridFSBucket (gridfs.js) reads of a base; Symbol.for, so that gridfs.js needs nothing from here.
 const FILES = Symbol.for('ished.files');
 export const MAX_DOCUMENTS = 100_000;
@@ -159,7 +170,7 @@ export function connect({ url, key, cluster = null, timeoutMs = 30_000, fetch: d
         (await call('GET', `${v1}/bases/${enc(name)}/collections`)).map((c) => ({
           name: c.name,
           type: c.type,
-          options: c.type === 'view' ? { viewOn: c.viewOn, pipeline: c.pipeline } : {},
+          options: optionsOf(c),
           info: { readOnly: c.type === 'view' },
         }));
       return {
@@ -668,7 +679,7 @@ class Query {
   /**
    * The documents found, a page at a time ({ size }: 1 to 1000), as Google's APIs page their lists (pageToken):
    * each document once, in the query's order, even when documents are added or deleted between two pages.
-   *   for await (const page of patients.where('ville', '==', 'Dakar').orderBy('nom').pages({ size: 200 })) { … }
+   *   for await (const page of clients.where('ville', '==', 'Dakar').orderBy('nom').pages({ size: 200 })) { … }
    */
   async *pages({ size = 1000 } = {}) {
     let pageToken = null;
@@ -853,6 +864,19 @@ class Collection extends Query {
 
   async estimatedDocumentCount(options = {}) {
     return (await this._callFor(options)('POST', `${this._path}:estimatedDocumentCount`, {})).count;
+  }
+
+  /** As MongoDB's: the collection's options, as listCollections gives them ({ capped: true, size, max } if capped). */
+  async options() {
+    const at = this._path.lastIndexOf('/');
+    const name = decodeURIComponent(this._path.slice(at + 1));
+    const found = (await this._call('GET', this._path.slice(0, at))).find((c) => c.name === name);
+    return found ? optionsOf(found) : {};
+  }
+
+  /** As MongoDB's: whether the collection is capped. */
+  async isCapped() {
+    return (await this.options()).capped === true;
   }
 
   /** As MongoDB's distinct(key, filter); without a filter, the conditions given by where(…). */

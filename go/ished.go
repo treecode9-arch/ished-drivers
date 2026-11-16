@@ -1,6 +1,6 @@
 // Package ished is IshedDB for Go, written as MongoDB's Go driver is:
 //
-//	coll := client.Database("clinique").Collection("patients")
+//	coll := client.Database("boutique").Collection("clients")
 //	cur, err := coll.Find(ctx, ished.M{"ville": "Dakar"}, ished.FindOptions{Sort: ished.D{{Key: "age", Value: -1}}})
 //
 // Only Go's standard library. The key never travels but over HTTPS (or to this machine). Values: time.Time <-> dates,
@@ -1088,7 +1088,7 @@ func (r *SingleResult) Decode(v any) error {
 func (r *SingleResult) Err() error { return r.err }
 
 // RunCommand runs a command of the database, as the driver's: create, collMod (a view's viewOn and pipeline), drop,
-// explain (D{{"explain", D{{"find", "patients"}, {"filter", M{…}}}}, {"verbosity", "executionStats"}}).
+// explain (D{{"explain", D{{"find", "clients"}, {"filter", M{…}}}}, {"verbosity", "executionStats"}}).
 func (d *Database) RunCommand(ctx context.Context, command any) *SingleResult {
 	page, _, err := d.call(ctx, "POST", d.path+":runCommand", toWire(command))
 	if err != nil {

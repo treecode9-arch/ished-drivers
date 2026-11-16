@@ -1,4 +1,4 @@
-"""IshedDB for Python, written as PyMongo is: client.db("clinique").collection("patients").find({...}).
+"""IshedDB for Python, written as PyMongo is: client.db("boutique").collection("clients").find({...}).
 
 Only the standard library. The key never travels but over HTTPS (or to this machine). Values: datetime <-> dates,
 int beyond 2**53 <-> big integers, bytes <-> bytes, as IshedDB keeps them.

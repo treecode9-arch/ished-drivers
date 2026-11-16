@@ -1,4 +1,4 @@
-# IshedDB for Ruby, written as the mongo gem is: client.use("clinique")[:patients].find(ville: "Dakar").sort(age: -1).to_a
+# IshedDB for Ruby, written as the mongo gem is: client.use("boutique")[:clients].find(ville: "Dakar").sort(age: -1).to_a
 # Only Ruby's standard library. The key never travels but over HTTPS (or to this machine). Values: Time <-> dates,
 # Integer beyond 2**53 <-> big integers, binary Strings (ASCII-8BIT) <-> bytes.
 require "json"

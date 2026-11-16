@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 /**
  * IshedDB for Java, written as MongoDB's Java driver is:
- * new IshedClient(url, key).getDatabase("clinique").getCollection("patients").find(new Document("ville", "Dakar"))
+ * new IshedClient(url, key).getDatabase("boutique").getCollection("clients").find(new Document("ville", "Dakar"))
  * Only Java's own libraries. The key never travels but over HTTPS (or to this machine).
  */
 public final class IshedClient {
